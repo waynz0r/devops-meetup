@@ -1,0 +1,49 @@
+#cloud-config
+
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/8w207Xt0GTUTxWThekTozbDk5pJvePxXe6j++fytWAEol7x5fzKtIsxZzP2On0PsKaK1w3eP953PTSL6meIXr8k2qH/GJcanjend0SIYdNRrD9xY7n7U6ZCT2TLShSh/C7I8iDDlWGg/bMgpUS3IA4fXJHOMYc5x59Hm2JIh4eMXR/mlT4aBbjnSRdDduQ8XlJ6mUUNINwMv+2/lyJtInhjDUUzesaBm2Liu1d7fzjUOFJ2O3nEcJDs0jfUlD3dZcuSvNu0t67Asrqc4zw3w0Q0Imzm/xkqQiKfqujyofhsQB8D97EStLvm9JdG/5RHKIRPuzMQZ1Q7IociJyMYh coreos-master
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCd5caHzGJyhlG5OVA8MrGUqcTFo1eVgnurHHZ/rkTjXcQPdVJBsPKsNKT7KxWglvRH/vlUC4BQ6SQRciOxeqlB9IFnR5xDXZ2+mpPzTk3TmbJCpyThEN0a10JNOLx4uZO33OoiTuyBYLI3uOHpPfuzDFy7Wqfrd3qQiRClXxShQLhd2lt7l49w6HPP+JmTeDhNb7+L8cQsLvtDXpY27t/D4aO7e3pUH72skjA+8CFMdbB51IbKtObvrPugrErWYaPRb/YZmvUMLApCk6ecqyzW2nkeGzFy0IQobpURXH8gtGsndUNQSq0Ie/P4JAJeP+R19C/bNLY8te9E4yZFljHr wayne@scepter
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDiS8AYFg4s2fhmx7sClwlSTwn4ihSv+5mE0d56u2RYQ86uvQwMita0rXdlRrzskRy42ni/8rhqRSwctIHrjIA8OXE3HE+ivSxgLVcNJmmBTUUfJDmlVRvDhGLh/Sp9HglfzZX5peeVMxk26aKjkTE5hg6OXLFg7heYu+IGaE4oClzBHacKMkRrdfSltBI4xQ6UMjCh5vctwRES+AtLfT4rcMPhcIBwWG02uLLNAgy6iqjfef0y5TefXDprPNTT2xvw2wMSdGl+cOlpdLX6uQAusnFW9Rd7LRezfLw9UCCwWb5PbDBM+T0tcuAHSyiTp1Ah4EfwWeB/bY0Cvd56ENcL docker-machine
+coreos:
+  units:
+    - name: "btrfs-resize.service"
+      command: "start"
+      content: |
+        [Unit]
+        Description=Resize BTRFS
+        Author=Me
+        Before=docker.service
+
+        [Service]
+        Restart=no
+        ExecStart=/usr/sbin/btrfs filesystem resize max /
+    - name: settimezone.service
+      command: start
+      content: |
+        [Unit]
+        Description=Set the time zone
+
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone Europe/Budapest
+        RemainAfterExit=yes
+        Type=oneshot
+    - name: docker.service
+      command: start
+    - name: xe-linux-distribution.service
+      command: start
+      content: |
+        [Unit]
+        Description=XenServer Linux Guest Agent
+        After=docker.service
+
+        [Service]
+        ExecStartPre=/xentools/xe-linux-distribution /var/cache/xe-linux-distribution
+        Environment="XE_UPDATE_GUEST_ATTRS=/xentools/xe-update-guest-attrs"
+        ExecStart=/xentools/xe-daemon
+write_files:
+  # Enable ARP notifications for smooth network recovery after migrations
+  - path: /etc/sysctl.d/10-enable-arp-notify.conf
+    permissions: 0644
+    owner: root
+    content: |
+      net.ipv4.conf.all.arp_notify = 1

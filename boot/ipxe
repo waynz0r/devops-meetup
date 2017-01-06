@@ -1,0 +1,6 @@
+#!ipxe
+
+set base-url http://beta.release.core-os.net/amd64-usr/1235.1.0
+kernel ${base-url}/coreos_production_pxe.vmlinuz cloud-config-url=http://cdn.rawgit.com/waynz0r/devops-meetup/master/boot/cloud-init root=LABEL=ROOT
+initrd ${base-url}/coreos_production_pxe_image.cpio.gz
+boot

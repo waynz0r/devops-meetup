@@ -37,10 +37,15 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
         dhcpOption  : 'coreos-config-default',
       });
 
+      let type = 'host';
+
+      if (!this.get('useHost')) {
+        type = 'machine';
+      }
+
       this.set('model', this.get('store').createRecord({
-        type: 'machine',
+        type: type,
         'fotexnetConfig': config,
-//        engineInstallUrl: 'http://10.1.108.13/1.10.sh',
       }));
     },
 

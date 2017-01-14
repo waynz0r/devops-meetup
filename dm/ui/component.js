@@ -18,6 +18,7 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
       { name: '50 GB', value: 51200 }
     ],
     memory_sizes: [
+      { name: '1 GB', value: 1024 },
       { name: '2 GB', value: 2048 },
       { name: '4 GB', value: 4096 },
       { name: '8 GB', value: 8192 }
@@ -33,7 +34,7 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
         type        : 'fotexnetConfig',
         location    : 'console',
         diskSize    : 4096,
-        memorySize  : 2048,
+        memorySize  : 1024,
         network     : 'Console',
         vcpuCount   : 1,
         dhcpOption  : 'coreos-config-default',

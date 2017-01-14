@@ -12,6 +12,8 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
     ],
     disk_sizes: [
       { name: '4 GB', value: 4096 },
+      { name: '10 GB', value: 10240 },
+      { name: '15 GB', value: 15360 },
       { name: '20 GB', value: 20480 },
       { name: '50 GB', value: 51200 }
     ],
@@ -31,7 +33,7 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
         type        : 'fotexnetConfig',
         location    : 'console',
         diskSize    : 4096,
-        memorySize  : 1024,
+        memorySize  : 2048,
         network     : 'Console',
         vcpuCount   : 1,
         dhcpOption  : 'coreos-config-default',
@@ -58,9 +60,9 @@ define('ui/components/machine/driver-fotexnet/component', ['exports', 'ember', '
       // Add more specific errors
 
       // Check something and add an error entry if it fails:
-      if ( parseInt(this.get('model.fotexnetConfig.diskSize'),10) < 1024 )
+      if ( parseInt(this.get('model.fotexnetConfig.diskSize'),10) < 4096 )
       {
-        errors.push('Size must be at least 1024 MB');
+        errors.push('Size must be at least 4096 MB');
       }
 
       // Set the array of errors for display,
